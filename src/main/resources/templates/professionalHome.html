@@ -1,0 +1,1490 @@
+<!doctype html>
+<html lang="en" class="h-full" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect - Professional Dashboard</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link rel="icon" type="image/png" th:href="@{/images/myLogo.png}">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef5ff', 100: '#d9e8ff', 200: '#bcd8ff', 300: '#8ec0ff', 400: '#599eff', 500: '#3378ff', 600: '#1a56f5', 700: '#1444e1', 800: '#1538b6', 900: '#17358f' },
+                        slate: { 850: '#141c2e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'DM Sans', sans-serif
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        .sidebar-link {
+            transition: all .2s
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: rgba(51, 120, 255, .1);
+            color: #3378ff
+        }
+
+        .card-hover {
+            transition: all .25s
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .08)
+        }
+
+        .fade-in {
+            animation: fadeIn .4s ease
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .tab-btn.active {
+            color: #3378ff;
+            border-bottom: 2px solid #3378ff;
+            font-weight: 600
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(4px)
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: 600
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px
+        }
+
+        .match-badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+
+<body class="h-full bg-gray-50">
+    <div id="app" class="h-full flex overflow-hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-gray-200 flex flex-col h-full shrink-0 z-30">
+            <div class="p-5 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 flex items-center justify-center"><img th:src="@{/images/myLogo.png}"
+                            alt="Logo">
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-gray-900 leading-tight"
+                            style="font-family:'Playfair Display',serif">EduConnect</h1>
+                        <p class="text-[10px] text-brand-600 font-semibold tracking-wide uppercase">Professional</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+                <button onclick="switchView('feed')" data-nav="feed"
+                    class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700">
+                    <i data-lucide="home" class="w-[18px] h-[18px]"></i> Home Feed
+                </button>
+                <button onclick="switchView('tracker')" data-nav="tracker"
+                    class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700">
+                    <i data-lucide="activity" class="w-[18px] h-[18px]"></i> Application Tracker
+                </button>
+                <button onclick="switchView('profile')" data-nav="profile"
+                    class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700">
+                    <i data-lucide="user" class="w-[18px] h-[18px]"></i> Profile Builder
+                </button>
+                <button onclick="switchView('resume')" data-nav="resume"
+                    class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700">
+                    <i data-lucide="settings" class="w-[18px] h-[18px]"></i> Edit Profile
+                </button>
+                <button onclick="switchView('skills')" data-nav="skills"
+                    class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700">
+                    <i data-lucide="sparkles" class="w-[18px] h-[18px]"></i> Skill Gaps
+                </button>
+                <button onclick="switchView('saved')" data-nav="saved"
+                    class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700">
+                    <i data-lucide="bookmark" class="w-[18px] h-[18px]"></i> Saved
+                </button>
+                <!-- Divider -->
+                <div class="border-t border-gray-200 my-3"></div>
+                <!-- Logout -->
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-all duration-200">
+                        <i data-lucide="log-out" class="w-[18px] h-[18px]"></i> Logout
+                    </button>
+                </form>
+            </nav>
+            <div class="p-4 border-t border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-sm"
+                        th:text="${#strings.substring(user.fullName,0,1)}">
+                        P
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate" id="sidebar-professional-name"
+                            th:text="${user.fullName}"></p>
+                        <p class="text-xs text-gray-500 truncate" th:text="${professional.company}">Google</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"
+            class="fixed top-3 left-3 z-40 lg:hidden bg-white p-2 rounded-lg shadow-md border border-gray-200">
+            <i data-lucide="menu" class="w-5 h-5 text-gray-700"></i>
+        </button>
+
+        <!-- Main Content -->
+        <main class="flex-1 h-full overflow-y-auto">
+            <!-- Top Bar -->
+            <header
+                class="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-20 px-6 py-3 flex items-center justify-between">
+                <div>
+                    <h2 id="page-title" class="text-xl font-bold text-gray-900">Home Feed</h2>
+                    <p id="page-subtitle" class="text-xs text-gray-500 mt-0.5">Find your next opportunity</p>
+                </div>
+                <!-- TOP BAR ACTIONS -->
+                <div class="flex items-center gap-3 relative">
+                    <!-- SEARCH CONTAINER -->
+                    <div id="search-container" class="flex items-center relative">
+                        <!-- SEARCH INPUT -->
+                        <input type="text" id="searchInput" placeholder="Search opportunities..." class="w-0 opacity-0 px-0 py-2 rounded-xl border border-gray-300 
+       focus:outline-none focus:ring-2 focus:ring-brand-500
+       transition-all duration-300 ease-in-out overflow-hidden">
+
+                        <!-- SEARCH BUTTON -->
+                        <button onclick="toggleSearch()" class="p-2 rounded-lg hover:bg-gray-100 transition ml-2">
+                            <i data-lucide="search" class="w-5 h-5 text-gray-600"></i>
+                        </button>
+                    </div>
+
+                    <!-- NOTIFICATION BELL -->
+                    <!-- NOTIFICATION BELL -->
+                    <div class="relative">
+
+                        <button id="bell-btn" onclick="toggleNotifications()"
+                            class="relative p-2 rounded-lg hover:bg-gray-100 transition">
+                            <i data-lucide="bell" class="w-5 h-5 text-gray-600"></i>
+                            <!-- RED DOT -->
+                            <span id="notif-dot"
+                                class="hidden absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full">
+                            </span>
+                        </button>
+
+                        <!-- DROPDOWN -->
+                        <div id="notif-dropdown"
+                            class="hidden absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+
+                            <!-- HEADER -->
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                                <h3 class="font-semibold text-gray-900">Notifications</h3>
+                                <span id="notif-count"
+                                    class="hidden text-xs bg-red-100 text-red-600 font-semibold px-2 py-0.5 rounded-full">
+                                </span>
+                            </div>
+
+                            <!-- LIST — scrollable, max half screen -->
+                            <div id="notif-list" class="overflow-y-auto divide-y divide-gray-50"
+                                style="max-height: 50vh;">
+                                <p class="text-center text-gray-400 text-sm py-6">Loading...</p>
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div class="px-4 py-3 border-t border-gray-100 text-center">
+                                <button onclick="switchView('feed'); closeNotifications();"
+                                    class="text-sm text-brand-600 hover:underline font-medium">
+                                    View all opportunities
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-6 max-w-7xl mx-auto">
+                <!-- FEED VIEW -->
+                <section id="view-feed" class="fade-in">
+                    <!-- Filters -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-5">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
+                                <select id="filter-type" onchange="filterFeed()"
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                                    <option value="all">All</option>
+                                    <option value="job">Jobs</option>
+                                    <option value="internship">Internships</option>
+                                    <option value="hackathon">Hackathons</option>
+                                    <option value="event">Coding Event</option>
+                                </select>
+                            </div>
+
+                            <div class="flex-1 min-w-[180px]">
+                                <label for="filter-skill"
+                                    class="block text-xs font-medium text-gray-500 mb-1">Skills</label>
+                                <input id="filter-skill" onkeyup="filterFeed()" type="text" placeholder="e.g. React"
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Location</label>
+                                <input type="text" id="locationSearch" oninput="filterByLocation()"
+                                    placeholder="Search by location..."
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+                            </div>
+
+                            <div class="flex items-end">
+                                <button onclick="resetFilters()"
+                                    class="w-full px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opportunities Feed -->
+                    <div id="feed-container" class="space-y-4">
+                        <div class="space-y-6">
+                            <!-- LOOP ALL POSTS -->
+                            <div th:each="post : ${posts}"
+                                class="post-card bg-white border border-gray-200 rounded-2xl p-6 shadow-sm" th:attr="
+        data-type=${#strings.toLowerCase(post.type)},
+        data-location=${#strings.toLowerCase(post.location)},
+        data-skills=${#strings.toLowerCase(#strings.listJoin(post.skillsRequired, ','))}
+     ">
+                                <!-- TOP HEADER -->
+                                <div class="flex justify-between items-start">
+                                    <div class="flex gap-4">
+                                        <!-- ICON -->
+                                        <div
+                                            class="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-lg">
+                                            <span th:text="${#strings.substring(post.title,0,1)}">J</span>
+                                        </div>
+
+                                        <!-- TITLE -->
+                                        <div>
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <h2 class="text-xl font-bold text-gray-900" th:text="${post.title}">
+                                                    Software Engineer
+                                                </h2>
+                                                <!-- TYPE BADGE -->
+                                                <span
+                                                    class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700"
+                                                    th:text="${post.type}">
+                                                    JOB
+                                                </span>
+                                            </div>
+
+                                            <div class="flex flex-wrap items-center gap-4 mt-1">
+                                                <!-- ORGANIZATION -->
+                                                <div class="flex items-center gap-1 text-sm text-gray-500 ">
+                                                    <i data-lucide="building-2" class="w-4 h-4 text-gray-400"></i>
+                                                    <span th:text="${orgNameMap[post.organizationId]}">
+                                                        Organization Name
+                                                    </span>
+                                                </div>
+
+                                                <!-- LOCATION -->
+                                                <div class="flex items-center gap-1 text-sm text-gray-500">
+                                                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i>
+                                                    <span th:text="${post.location}" class="post-location">Surat</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ACTIONS -->
+                                    <div class="flex gap-1">
+                                        <div th:text="${post.matchScore + '%'}"
+                                            th:classappend="${post.matchScore >= 70 ? 'badge-green' : post.matchScore >= 40 ? 'badge-yellow' : 'badge-red'}"
+                                            class="match-badge">
+                                        </div>
+                                        <!-- SAVE -->
+                                        <button class="save-btn p-2 rounded-lg hover:bg-yellow-50 transition"
+                                            th:attr="data-postid=${post.id}" onclick="toggleSavePost(this)">
+                                            <i data-lucide="bookmark" th:classappend="${savedPostIds.contains(post.id)}
+    ? ' fill-yellow-400 text-yellow-500'
+    : ' text-gray-400'" class="save-icon w-5 h-5">
+                                            </i>
+                                        </button>
+                                        <!-- View -->
+                                        <button class="p-2 rounded-lg hover:bg-gray-100 transition"
+                                            th:attr="onclick='openPostViewModal(\'' + ${post.id} + '\')'">
+                                            <i data-lucide="eye" class="w-5 h-5 text-gray-400"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- DESCRIPTION -->
+                                <p class="mt-4 text-gray-700 leading-relaxed" th:text="${post.description}">Description
+                                </p>
+
+                                <!-- SKILLS -->
+                                <div class="flex flex-wrap gap-2 mt-4">
+                                    <span th:each="skill : ${post.skillsRequired}"
+                                        class="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
+                                        th:text="${skill}">
+                                        Java
+                                    </span>
+                                </div>
+
+                                <!-- JOB SECTION -->
+                                <div th:if="${post.type == 'JOB'}" class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="bg-gray-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Role</p>
+                                        <p class="font-semibold" th:text="${post.jobRole}">Backend Developer</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Salary</p>
+                                        <p class="font-semibold" th:text="${post.salaryRange}">₹12 LPA</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Experience</p>
+                                        <p class="font-semibold" th:text="${post.experienceRequired}">2 Years</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Employment Type</p>
+                                        <p class="font-semibold" th:text="${post.employmentType}">Remote</p>
+                                    </div>
+                                </div>
+
+                                <!-- INTERNSHIP SECTION -->
+                                <div th:if="${post.type == 'INTERNSHIP'}"
+                                    class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="bg-blue-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Duration</p>
+                                        <p class="font-semibold" th:text="${post.internshipDuration}">6 Months</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Stipend</p>
+                                        <p class="font-semibold" th:text="${post.stipend}">₹15,000</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Mode</p>
+                                        <p class="font-semibold" th:text="${post.mode != null ? post.mode : 'N/A'}">
+                                            Remote</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">PPO</p>
+                                        <p class="font-semibold"
+                                            th:text="${post.ppoAvailable ? 'Available' : 'Not Available'}">Available</p>
+                                    </div>
+                                </div>
+
+                                <!-- CODING EVENT -->
+                                <div th:if="${post.type == 'CODING EVENT'}"
+                                    class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="bg-purple-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Platform</p>
+                                        <p class="font-semibold" th:text="${post.contestPlatform}">Leetcode</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Difficulty</p>
+                                        <p class="font-semibold" th:text="${post.difficultyLevel}">Medium</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Duration</p>
+                                        <p class="font-semibold" th:text="${post.contestDuration}">3 Hours</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded-xl">
+                                        <p class="text-xs text-gray-500">Contest Date</p>
+                                        <p class="font-semibold" th:text="${post.contestDate}">10 May</p>
+                                    </div>
+                                </div>
+
+                                <!-- FOOTER -->
+                                <div class="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                    <div class="flex gap-6 text-sm text-gray-500">
+                                        <!-- WORK MODE -->
+                                        <div>
+                                            <span th:if="${post.mode == 'remote'}" class="text-green-600">🌐
+                                                Remote</span>
+                                            <span th:if="${post.mode == 'hybrid'}" class="text-yellow-600">🔀
+                                                Hybrid</span>
+                                            <span th:if="${post.mode != 'remote' and post.mode != 'hybrid'}"
+                                                class="text-gray-600">🏢 On-site</span>
+                                        </div>
+                                        <p>👥 <span th:text="${post.totalApplicants}">0</span> Applicants</p>
+                                        <p>⏳ Deadline: <span th:text="${post.deadline}"></span></p>
+                                    </div>
+
+                                    <!-- APPLY BUTTON -->
+
+
+                                    <button th:attr="data-postid=${post.id}" onclick="applyPost(this)"
+                                        th:disabled="${post.status == 'CLOSED' or appliedPostIds.contains(post.id)}"
+                                        th:classappend="${post.status == 'CLOSED'} ? 'bg-red-600 cursor-not-allowed hover:bg-red-600' : 
+                       (${appliedPostIds.contains(post.id)} ? 'bg-green-600 cursor-not-allowed hover:bg-green-600' : 'bg-brand-600 hover:bg-brand-700')"
+                                        class="apply-btn px-5 py-3 rounded-xl text-white font-semibold transition">
+
+                                        <span th:text="${post.status == 'CLOSED'} ? 'Closed' : 
+                  (${appliedPostIds.contains(post.id)} ? 'Applied' : 'Apply Now')">
+                                        </span>
+
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PROFILE VIEW -->
+                <section id="view-profile" class="fade-in hidden">
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="h-36 bg-gradient-to-r from-brand-600 via-brand-500 to-indigo-500 relative">
+                            <div class="absolute -bottom-12 left-6">
+                                <div
+                                    class="w-24 h-24 rounded-2xl bg-white shadow-lg border-4 border-white flex items-center justify-center">
+                                    <span class="text-3xl font-bold text-brand-600"
+                                        style="font-family:'Playfair Display',serif" id="profile-avatar"
+                                        th:text="${#strings.substring(user.fullName,0,1)}">P</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-16 px-6 pb-6">
+                            <h2 class="text-2xl font-bold text-gray-900" id="profile-name" th:text="${user.fullName}">
+                                Aisha Khan</h2>
+                            <p class="text-gray-500 mt-1" id="profile-headline" th:text="${professional.bio}">Senior
+                                Software Engineer</p>
+                            <div class="flex items-center gap-3 mt-2 text-sm text-gray-500 flex-wrap">
+                                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                                    <p th:text="${professional.location}">Surat</p>
+                                </span>
+                                <span class="flex items-center gap-1 ml-3"><i data-lucide="briefcase"
+                                        class="w-3.5 h-3.5"></i>
+                                    <p th:text="${professional.company}">Google</p>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div class="px-6 py-4 border-t border-gray-100">
+                            <h3 class="font-semibold text-gray-900 mb-3">Skills</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span th:each="skill : ${#strings.arraySplit(professional.skills, ',')}"
+                                    th:text="${skill}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Experience -->
+                        <div class="px-6 py-4 border-t border-gray-100">
+                            <h3 class="font-semibold text-gray-900 mb-3">Experience</h3>
+                            <p class="text-sm text-gray-600" th:text="${professional.experience}">5+ Years in Fullstack
+                                Engineering</p>
+                        </div>
+
+                        <!-- Education -->
+                        <div class="px-6 py-4 border-t border-gray-100">
+                            <h3 class="font-semibold text-gray-900 mb-3">Education</h3>
+                            <p class="text-sm text-gray-600" th:text="${professional.education}">Bachelor of Technology
+                                in CSE</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- APPLICATION TRACKER VIEW -->
+                <section id="view-tracker" class="fade-in hidden">
+                    <div class="flex gap-2 border-b border-gray-200 mb-4">
+                        <button onclick="filterTracker('all', this)"
+                            class="tab-btn active px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent transition">
+                            All
+                        </button>
+                        <button onclick="filterTracker('applied', this)"
+                            class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent transition">
+                            Applied
+                        </button>
+
+                        <button onclick="filterTracker('shortlisted', this)"
+                            class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent transition">
+                            Shortlisted
+                        </button>
+
+                        <button onclick="filterTracker('rejected', this)"
+                            class="tab-btn px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent transition">
+
+                            Rejected
+                        </button>
+
+                    </div>
+
+                    <div id="tracker-container" class="space-y-4">
+                        <!-- JS renders applied jobs list here -->
+                    </div>
+                </section>
+
+                <!-- EDIT PROFILE VIEW -->
+                <section id="view-resume" class="fade-in hidden">
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Edit Profile</h3>
+                        <form th:action="@{/professional/profile/update}" method="post" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <input type="text" name="fullName" th:value="${user.fullName}" required
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Company / Current
+                                    Role</label>
+                                <input type="text" name="company" th:value="${professional.company}" required
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                <input type="text" name="location" th:value="${professional.location}" required
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Experience
+                                    Description</label>
+                                <input type="text" name="experience" th:value="${professional.experience}" required
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Education</label>
+                                <input type="text" name="education" th:value="${professional.education}" required
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Skills
+                                    (comma-separated)</label>
+                                <input type="text" name="skills" th:value="${professional.skills}" required
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                                <textarea name="bio" rows="4" th:text="${professional.bio}" required
+                                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                            </div>
+                            <button type="submit"
+                                class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg text-sm transition">
+                                Save Profile Changes
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- SAVED OPPORTUNITIES VIEW -->
+                <section id="view-saved" class="fade-in hidden">
+                    <div id="saved-container" class="space-y-4">
+                        <!-- JS renders saved items here -->
+                    </div>
+                </section>
+
+                <!-- SKILL GAPS VIEW -->
+                <section id="view-skills" class="fade-in hidden">
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-5">
+                        <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-brand-600"></i>
+                            Skill Gap Analysis
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            Based on jobs you've applied to and your current skills
+                        </p>
+                        <div id="skill-gaps-container" class="space-y-3"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- POST VIEW MODAL -->
+    <div id="postViewModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white w-[95%] max-w-3xl rounded-2xl shadow-2xl overflow-hidden">
+            <!-- HEADER -->
+            <div class="flex justify-between items-center border-b px-6 py-4">
+                <h2 class="text-2xl font-bold text-gray-800">Post Details</h2>
+                <button onclick="closePostViewModal()"
+                    class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+            </div>
+            <!-- BODY -->
+            <div id="postViewModalContent" class="p-6 max-h-[80vh] overflow-y-auto">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Global variables for dashboard features
+        window.applications = [];
+        let searchOpen = false;
+
+        function switchView(view) {
+            document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
+            document.getElementById("view-" + view).classList.remove("hidden");
+
+            // Sidebar links active class
+            document.querySelectorAll(".sidebar-link").forEach(btn => {
+                btn.classList.remove("active");
+                if (btn.getAttribute("data-nav") === view) {
+                    btn.classList.add("active");
+                }
+            });
+
+            // Page header change
+            const titleMap = {
+                feed: "Home Feed",
+                tracker: "Application Tracker",
+                profile: "Profile Builder",
+                resume: "Edit Profile",
+                skills: "Skill Gaps",
+                saved: "Saved Opportunities"
+            };
+            const subtitleMap = {
+                feed: "Find your next opportunity",
+                tracker: "Track status of your job requests",
+                profile: "Your professional profile showcase",
+                resume: "Modify details of your background",
+                skills: "Skills analysis and matching overview",
+                saved: "Bookmarked jobs & events"
+            };
+
+            document.getElementById("page-title").innerText = titleMap[view] || "Dashboard";
+            document.getElementById("page-subtitle").innerText = subtitleMap[view] || "";
+
+            // Custom views activation loads
+            if (view === 'tracker') {
+                loadTrackerData();
+            } else if (view === 'saved') {
+                loadSavedPosts();
+            } else if (view === 'skills') {
+                loadSkillGap();
+            }
+
+            // Close notifications if open
+            closeNotifications();
+        }
+
+        // Toggle search input
+        function toggleSearch() {
+            const input = document.getElementById("searchInput");
+            searchOpen = !searchOpen;
+            if (searchOpen) {
+                input.classList.remove("w-0", "opacity-0", "px-0");
+                input.classList.add("w-48", "opacity-100", "px-3");
+                input.focus();
+            } else {
+                input.classList.add("w-0", "opacity-0", "px-0");
+                input.classList.remove("w-48", "opacity-100", "px-3");
+            }
+        }
+
+        // Search trigger on input keyup
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById("searchInput");
+            searchInput.addEventListener("keyup", () => {
+                const query = searchInput.value.toLowerCase().trim();
+                const posts = document.querySelectorAll(".post-card");
+                posts.forEach(post => {
+                    const text = post.innerText.toLowerCase();
+                    if (text.includes(query)) {
+                        post.style.display = "block";
+                    } else {
+                        post.style.display = "none";
+                    }
+                });
+            });
+
+            // Initializations
+            loadUnreadCount();
+            lucide.createIcons();
+        });
+
+        // Filter Feed logic
+        function filterFeed() {
+            const type = document.getElementById("filter-type").value.toLowerCase();
+            const skill = document.getElementById("filter-skill").value.toLowerCase().trim();
+            const location = document.getElementById("locationSearch").value.toLowerCase().trim();
+
+            const posts = document.querySelectorAll(".post-card");
+            posts.forEach(post => {
+                const postType = post.getAttribute("data-type");
+                const postLocation = post.getAttribute("data-location");
+                const postSkills = post.getAttribute("data-skills");
+
+                const matchType = (type === "all" || postType === type);
+                const matchSkill = (!skill || postSkills.includes(skill));
+                const matchLocation = (!location || postLocation.includes(location));
+
+                if (matchType && matchSkill && matchLocation) {
+                    post.style.display = "block";
+                } else {
+                    post.style.display = "none";
+                }
+            });
+        }
+
+        function filterByLocation() {
+            filterFeed();
+        }
+
+        function resetFilters() {
+            document.getElementById("filter-type").value = "all";
+            document.getElementById("filter-skill").value = "";
+            document.getElementById("locationSearch").value = "";
+            const posts = document.querySelectorAll(".post-card");
+            posts.forEach(post => post.style.display = "block");
+        }
+
+        // Apply to a post
+        async function applyPost(button) {
+            const postId = button.dataset.postid;
+            try {
+                const response = await fetch(`/professional/apply/${postId}`, {
+                    method: "POST"
+                });
+                const result = await response.json();
+                if (result.success) {
+                    button.innerText = "Applied";
+                    button.disabled = true;
+                    button.classList.remove("bg-brand-600", "hover:bg-brand-700");
+                    button.classList.add("bg-green-600", "cursor-not-allowed");
+                } else {
+                    alert("Already applied");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Application failed");
+            }
+        }
+
+        // Bookmark Toggle Save
+        async function toggleSavePost(button) {
+            const postId = button.dataset.postid;
+            try {
+                const response = await fetch(`/professional/saved/toggle/${postId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                const icon = button.querySelector('.save-icon');
+
+                if (data.saved) {
+                    icon.classList.remove('text-gray-400');
+                    icon.classList.add('text-yellow-500', 'fill-yellow-400');
+                } else {
+                    icon.classList.remove('text-yellow-500', 'fill-yellow-400');
+                    icon.classList.add('text-gray-400');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Open detailed view modal for a post
+        async function openPostViewModal(postId) {
+            try {
+                const response = await fetch(`/professional/post/${postId}`);
+                const post = await response.json();
+                const content = document.getElementById("postViewModalContent");
+
+                content.innerHTML = `
+<div class="space-y-6">
+    <div class="border-b pb-4">
+        <div class="flex items-center gap-3 flex-wrap">
+            <h1 class="text-2xl font-bold text-gray-900">${post.title}</h1>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">${post.type}</span>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold ${post.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${post.status}</span>
+        </div>
+        <div class="flex flex-wrap gap-4 mt-3 text-sm text-gray-500">
+            <span>📍 ${post.location || 'N/A'}</span>
+            <span>📅 Posted: ${post.createdAt || 'N/A'}</span>
+            <span>👥 Applicants: ${post.totalApplicants || 0}</span>
+            <span>👁 Views: ${post.totalViews || 0}</span>
+        </div>
+    </div>
+    <div>
+        <h3 class="text-lg font-semibold text-gray-800">Description</h3>
+        <p class="text-gray-600 leading-7 break-words">${post.description || 'No description available'}</p>
+    </div>
+    <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">General Details</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-gray-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Category</p>
+                <p class="font-semibold text-gray-800">${post.category || 'N/A'}</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Mode</p>
+                <p class="font-semibold text-gray-800">${post.mode || 'N/A'}</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Deadline</p>
+                <p class="font-semibold text-gray-800">${post.deadline || 'N/A'}</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Apply Link</p>
+                <a href="${post.applyLink || '#'}" target="_blank" class="font-semibold text-blue-600 break-all">${post.applyLink || 'N/A'}</a>
+            </div>
+        </div>
+    </div>
+    ${post.type === 'JOB' ? `
+    <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Job Details</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-blue-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Job Role</p>
+                <p class="font-semibold text-gray-800">${post.jobRole || 'N/A'}</p>
+            </div>
+            <div class="bg-blue-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Employment Type</p>
+                <p class="font-semibold text-gray-800">${post.employmentType || 'N/A'}</p>
+            </div>
+            <div class="bg-blue-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Experience Required</p>
+                <p class="font-semibold text-gray-800">${post.experienceRequired || 'N/A'}</p>
+            </div>
+            <div class="bg-blue-50 rounded-xl p-4">
+                <p class="text-xs text-gray-500">Salary Range</p>
+                <p class="font-semibold text-gray-800">${post.salaryRange || 'N/A'}</p>
+            </div>
+        </div>
+    </div>
+    ` : ''}
+    <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Skills Required</h3>
+        <div class="flex flex-wrap gap-2">
+            ${(post.skillsRequired || []).map(skill => `<span class="px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-700">${skill}</span>`).join('')}
+        </div>
+    </div>
+</div>
+`;
+                document.getElementById("postViewModal").classList.remove("hidden");
+                document.getElementById("postViewModal").classList.add("flex");
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function closePostViewModal() {
+            document.getElementById("postViewModal").classList.add("hidden");
+            document.getElementById("postViewModal").classList.remove("flex");
+        }
+
+        // Notification actions
+        // ═══════════════════════════════════════════
+        // PROFESSIONAL NOTIFICATIONS
+        // ═══════════════════════════════════════════
+
+        let notifOpen = false;
+
+        async function loadUnreadCount() {
+            try {
+                const res = await fetch('/professional/notifications/unread-count');
+                const data = await res.json();
+
+                const dot = document.getElementById('notif-dot');
+                const count = document.getElementById('notif-count');
+
+                if (data.count > 0) {
+                    dot.classList.remove('hidden');
+                    count.textContent = data.count;
+                    count.classList.remove('hidden');
+                } else {
+                    dot.classList.add('hidden');
+                    count.classList.add('hidden');
+                }
+            } catch (err) {
+                console.error('Failed to load unread count:', err);
+            }
+        }
+
+        async function toggleNotifications() {
+            const dropdown = document.getElementById('notif-dropdown');
+            notifOpen = !notifOpen;
+
+            if (notifOpen) {
+                dropdown.classList.remove('hidden');
+                await loadNotifications();
+                await markAllNotifRead();
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
+
+        function closeNotifications() {
+            document.getElementById('notif-dropdown').classList.add('hidden');
+            notifOpen = false;
+        }
+
+        async function loadNotifications() {
+            const container = document.getElementById('notif-list');
+            try {
+                const res = await fetch('/professional/notifications');
+                const list = await res.json();
+
+                if (!list || list.length === 0) {
+                    container.innerHTML = `
+                <p class="text-center text-gray-400 text-sm py-6">
+                    No new notifications
+                </p>`;
+                    return;
+                }
+
+                const typeIcon = t => t === 'JOB' ? 'briefcase' :
+                    t === 'INTERNSHIP' ? 'graduation-cap' :
+                        t === 'HACKATHON' ? 'trophy' : 'calendar';
+
+                container.innerHTML = list.map(n => `
+            <div class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition cursor-pointer
+                        ${!n.read ? 'bg-blue-50' : ''}"
+                 onclick="openPostViewModal('${n.postId}'); closeNotifications();">
+
+                <!-- ICON -->
+                <div class="w-9 h-9 rounded-lg bg-brand-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <i data-lucide="${typeIcon(n.postType)}"
+                       class="w-4 h-4 text-brand-600"></i>
+                </div>
+
+                <!-- TEXT -->
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">
+                        ${n.postTitle}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                        ${n.orgName} · ${n.postType || ''}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        ${n.createdAt ? new Date(n.createdAt).toLocaleDateString() : ''}
+                    </p>
+                </div>
+
+                <!-- UNREAD DOT -->
+                ${!n.read
+                        ? `<span class="w-2 h-2 bg-brand-500 rounded-full mt-2 shrink-0"></span>`
+                        : ''}
+            </div>
+        `).join('');
+
+                lucide.createIcons();
+
+            } catch (err) {
+                container.innerHTML = `
+            <p class="text-center text-red-400 text-sm py-6">Failed to load</p>`;
+            }
+        }
+
+        async function markAllNotifRead() {
+            try {
+                await fetch('/professional/notifications/mark-read', { method: 'POST' });
+                document.getElementById('notif-dot').classList.add('hidden');
+                document.getElementById('notif-count').classList.add('hidden');
+            } catch (err) {
+                console.error('Failed to mark read:', err);
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            const dropdown = document.getElementById('notif-dropdown');
+            const bellBtn = document.getElementById('bell-btn');
+            if (notifOpen && !dropdown.contains(e.target) && !bellBtn.contains(e.target)) {
+                closeNotifications();
+            }
+        });
+
+        // Load unread count on page load + poll every 30s
+        loadUnreadCount();
+        setInterval(loadUnreadCount, 30000);
+
+        // Application Tracker Actions
+        async function loadTrackerData() {
+            const container = document.getElementById("tracker-container");
+            container.innerHTML = `<p class="text-center text-gray-400 py-10">Loading applications...</p>`;
+            try {
+                const response = await fetch("/professional/applications");
+                window.applications = await response.json();
+                renderTracker('all');
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<p class="text-center text-red-500 py-10">Failed to load tracker</p>`;
+            }
+        }
+
+        function filterTracker(status, button) {
+            document.querySelectorAll("#view-tracker .tab-btn").forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+            renderTracker(status);
+        }
+
+        function renderTracker(status) {
+            const container = document.getElementById("tracker-container");
+            const filtered = status === 'all' ? window.applications : window.applications.filter(app => app.status.toLowerCase() === status);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl bg-white p-6">
+                        <i data-lucide="folder-open" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                        <h4 class="font-bold text-gray-800">No Applications Found</h4>
+                        <p class="text-sm text-gray-500 mt-1">You haven't submitted any job or internship applications yet.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = filtered.map(app => {
+                const statusColors = {
+                    applied: "bg-blue-100 text-blue-800",
+                    shortlisted: "bg-yellow-100 text-yellow-800",
+                    accepted: "bg-green-100 text-green-800",
+                    rejected: "bg-red-100 text-red-800",
+                    cancelled: "bg-gray-100 text-gray-800"
+                };
+                const colorClass = statusColors[app.status.toLowerCase()] || "bg-gray-100 text-gray-800";
+
+                return `
+                    <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 card-hover">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg">
+                                ${app.title.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-lg">${app.title}</h4>
+                                <div class="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-500">
+                                    <span>🏢 ${app.company}</span>
+                                    <span>📍 ${app.location} (${app.mode || 'on-site'})</span>
+                                    <span>📅 Applied: ${app.appliedAt || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 justify-between md:justify-end">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${colorClass}">${app.status}</span>
+                            ${app.status.toLowerCase() === 'applied' ? `
+                                <button onclick="cancelApplication('${app.applicationId}')" class="text-sm font-medium text-red-500 hover:text-red-700 bg-red-50 px-3 py-1.5 rounded-lg transition">
+                                    Cancel
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        async function cancelApplication(applicationId) {
+            const confirmCancel = confirm("Are you sure you want to cancel this application?");
+            if (!confirmCancel) return;
+
+            try {
+                const response = await fetch(`/professional/application/cancel/${applicationId}`, {
+                    method: "DELETE"
+                });
+                if (response.ok) {
+                    window.applications = window.applications.filter(app => app.applicationId !== applicationId);
+                    renderTracker('all');
+                } else {
+                    alert("Failed to cancel application");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Server error");
+            }
+        }
+
+        // Saved Bookmarked Posts
+        async function loadSavedPosts() {
+            const container = document.getElementById("saved-container");
+            container.innerHTML = `<p class="text-center text-gray-400 py-10">Loading saved opportunities...</p>`;
+            try {
+                const response = await fetch("/professional/saved/saved-posts");
+                const savedList = await response.json();
+
+                if (savedList.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl bg-white p-6">
+                            <i data-lucide="bookmark" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                            <h4 class="font-bold text-gray-800">No Saved Opportunities</h4>
+                            <p class="text-sm text-gray-500 mt-1">Bookmark posts from your feed to view them later here.</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                    return;
+                }
+
+                container.innerHTML = savedList.map(post => `
+                    <div class="post-card bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                        <!-- TOP HEADER -->
+                        <div class="flex justify-between items-start">
+                            <div class="flex gap-4">
+                                <!-- ICON -->
+                                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-lg">
+                                    ${post.title ? post.title.charAt(0).toUpperCase() : 'P'}
+                                </div>
+                                <!-- TITLE -->
+                                <div>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h2 class="text-xl font-bold text-gray-900">${post.title || ''}</h2>
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">${post.type || ''}</span>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-4 mt-1 text-sm text-gray-500">
+                                        <span>📍 ${post.location || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                                  <!-- ACTIONS -->
+                            <div class="flex gap-1">
+                                <!-- BOOKMARK -->
+                                <button class="save-btn p-2 rounded-lg hover:bg-yellow-50 transition"
+                                        data-postid="${post.id}"
+                                        onclick="toggleSavePost(this); loadSavedPosts();">
+                                    <i data-lucide="bookmark" class="save-icon w-5 h-5 fill-yellow-400 text-yellow-500"></i>
+                                </button>
+                            </div>
+                        </div>
+                          <!-- DESCRIPTION -->
+                        <p class="mt-4 text-gray-700 leading-relaxed">${post.description || ''}</p>
+                        <!-- SKILLS -->
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            ${(post.skillsRequired || []).map(skill => `
+                                <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                                    ${skill}
+                                </span>
+                            `).join('')}
+                        </div>
+                        <!-- JOB SECTION -->
+                        ${post.type === 'JOB' ? `
+                            <div class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Role</p>
+                                    <p class="font-semibold">${post.jobRole || 'N/A'}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Salary</p>
+                                    <p class="font-semibold">${post.salaryRange || 'N/A'}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Experience</p>
+                                    <p class="font-semibold">${post.experienceRequired || 'N/A'}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Work Mode</p>
+                                    <p class="font-semibold">${post.mode || 'N/A'}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <!-- INTERNSHIP SECTION -->
+                        ${post.type === 'INTERNSHIP' ? `
+                            <div class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-blue-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Duration</p>
+                                    <p class="font-semibold">${post.internshipDuration || 'N/A'}</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Stipend</p>
+                                    <p class="font-semibold">${post.stipend || 'N/A'}</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Mode</p>
+                                    <p class="font-semibold">${post.mode || 'N/A'}</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">PPO</p>
+                                    <p class="font-semibold">${post.ppoAvailable ? 'Available' : 'Not Available'}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <!-- CODING EVENT SECTION -->
+                        ${post.type === 'CODING EVENT' ? `
+                            <div class="mt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-purple-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Platform</p>
+                                    <p class="font-semibold">${post.contestPlatform || 'N/A'}</p>
+                                </div>
+                                <div class="bg-purple-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Difficulty</p>
+                                    <p class="font-semibold">${post.difficultyLevel || 'N/A'}</p>
+                                </div>
+                                <div class="bg-purple-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Duration</p>
+                                    <p class="font-semibold">${post.contestDuration || 'N/A'}</p>
+                                </div>
+                                <div class="bg-purple-50 p-3 rounded-xl">
+                                    <p class="text-xs text-gray-500">Contest Date</p>
+                                    <p class="font-semibold">${post.contestDate || 'N/A'}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <!-- FOOTER -->
+                        <div class="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div class="flex gap-6 text-sm text-gray-500">
+                                <p>👥 ${post.totalApplicants || 0} Applicants</p>
+                                <p>⏳ Deadline: ${post.deadline || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<p class="text-center text-red-500 py-10">Failed to load saved items</p>`;
+            }
+        }
+
+        // Skill Gap Data load
+        // ===== SKILL GAPS =====
+        async function loadSkillGap() {
+            const container = document.getElementById('skill-gaps-container');
+
+            container.innerHTML = `
+        <div class="text-center py-8 text-gray-400">
+            <div class="animate-spin w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+            Analysing your skill gaps...
+        </div>`;
+
+            try {
+                const res = await fetch('/professional/skill-gap');
+                if (!res.ok) throw new Error('Failed');
+                const data = await res.json();
+
+                // ── no applications yet ──────────────────────────────────
+                if (data.totalApplied === 0) {
+                    container.innerHTML = `
+                <div class="text-center py-10 text-gray-400">
+                    <svg class="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="font-medium text-gray-500">No applications yet</p>
+                    <p class="text-sm mt-1">Apply to opportunities to see your skill gap analysis.</p>
+                </div>`;
+                    return;
+                }
+
+                // ── summary bar ──────────────────────────────────────────
+                const summaryHtml = `
+            <div class="mb-5 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">Overall Skill Match</span>
+                    <span class="text-sm font-bold ${data.matchPercent >= 70 ? 'text-green-600' : data.matchPercent >= 40 ? 'text-amber-600' : 'text-red-500'}">
+                        ${data.matchPercent}%
+                    </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-3">
+                    <div class="h-2.5 rounded-full transition-all duration-700
+                        ${data.matchPercent >= 70 ? 'bg-green-500' : data.matchPercent >= 40 ? 'bg-amber-400' : 'bg-red-400'}"
+                        style="width: ${data.matchPercent}%"></div>
+                </div>
+                <div class="flex gap-4 text-xs text-gray-500">
+                    <span>📋 <b>${data.totalApplied}</b> applications analysed</span>
+                    <span>✅ <b>${data.covered}</b> skills matched</span>
+                    <span>❌ <b>${data.gapCount}</b> skills missing</span>
+                </div>
+            </div>`;
+
+                // ── learn links ──────────────────────────────────────────
+                const learnLinks = {
+                    'react': 'https://react.dev',
+                    'typescript': 'https://www.typescriptlang.org/docs',
+                    'node.js': 'https://nodejs.org/en/learn',
+                    'mongodb': 'https://learn.mongodb.com',
+                    'aws': 'https://aws.amazon.com/training',
+                    'docker': 'https://docs.docker.com/get-started',
+                    'python': 'https://docs.python.org/3/tutorial',
+                    'java': 'https://dev.java/learn',
+                    'spring boot': 'https://spring.io/guides',
+                    'sql': 'https://www.w3schools.com/sql',
+                    'javascript': 'https://javascript.info',
+                    'machine learning': 'https://www.coursera.org/learn/machine-learning',
+                };
+
+                function getLearnUrl(skill) {
+                    return learnLinks[skill.toLowerCase()]
+                        || `https://www.google.com/search?q=learn+${encodeURIComponent(skill)}`;
+                }
+
+                function demandBadge(count) {
+                    if (count >= 3) return `<span class="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded-full font-medium">🔥 High demand</span>`;
+                    if (count === 2) return `<span class="text-xs px-2 py-0.5 bg-amber-100 text-amber-600 rounded-full font-medium">⚡ Medium demand</span>`;
+                    return `<span class="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full font-medium">💡 Low demand</span>`;
+                }
+
+                // ── missing skills ────────────────────────────────────────
+                const gapsHtml = data.gaps.length === 0 ? '' : `
+            <h4 class="text-sm font-semibold text-red-600 mb-2 flex items-center gap-1">
+                ❌ Missing Skills
+                <span class="text-xs font-normal text-gray-400">(found in jobs you applied to)</span>
+            </h4>
+            <div class="space-y-3 mb-5">
+            ${data.gaps.map(g => `
+                <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 border border-red-100">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h4 class="font-semibold text-gray-900">${g.skill}</h4>
+                                ${demandBadge(g.demandCount)}
+                            </div>
+                            <p class="text-xs text-gray-500">Required in:
+                                <span class="text-gray-700">
+                                    ${g.seenIn.slice(0, 2).join(', ')}
+                                    ${g.seenIn.length > 2 ? ' +' + (g.seenIn.length - 2) + ' more' : ''}
+                                </span>
+                            </p>
+                        </div>
+                        <a href="${getLearnUrl(g.skill)}" target="_blank"
+                           class="shrink-0 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium transition">
+                            Learn →
+                        </a>
+                    </div>
+                </div>`).join('')}
+            </div>`;
+
+                // ── strengths ────────────────────────────────────────────
+                const strengthsHtml = data.strengths.length === 0 ? '' : `
+            <h4 class="text-sm font-semibold text-green-600 mb-2 flex items-center gap-1">
+                ✅ Skills You Already Have
+            </h4>
+            <div class="flex flex-wrap gap-2">
+            ${data.strengths.map(s => `
+                <span class="px-3 py-1 bg-green-50 border border-green-200 text-green-700 text-xs font-medium rounded-full">
+                    ${s.skill}
+                </span>`).join('')}
+            </div>`;
+
+                container.innerHTML = summaryHtml + gapsHtml + strengthsHtml;
+
+            } catch (err) {
+                console.error('Skill gap error:', err);
+                container.innerHTML = `
+            <div class="text-center py-8 text-red-400">
+                <p>Failed to load skill gap data. Please try again.</p>
+            </div>`;
+            }
+        }
+    </script>
+    <script>
+        // ═══════════════════════════════════════════════
+        // ADMIN ANNOUNCEMENTS (separate from post notifs)
+        // ═══════════════════════════════════════════════
+
+        async function loadAnnouncementCount() {
+            try {
+                const res = await fetch('/professional/announcements/unread-count');
+                const data = await res.json();
+                const dot = document.getElementById('notif-dot');
+                const count = document.getElementById('notif-count');
+                // Combine with post notification count
+                const postCount = parseInt(count.textContent || '0') || 0;
+                const total = (data.count || 0) + postCount;
+                if (total > 0) {
+                    dot.classList.remove('hidden');
+                    count.textContent = total;
+                    count.classList.remove('hidden');
+                }
+            } catch (_) { }
+        }
+
+        // Append announcements to the notification dropdown list
+        async function loadAnnouncements() {
+            const list = document.getElementById('notif-list');
+            try {
+                const res = await fetch('/professional/announcements');
+                const items = await res.json();
+                if (!items || items.length === 0) return;
+
+                const html = items.map(a => `
+            <div class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition
+                        ${!a.read ? 'bg-amber-50' : ''}">
+                <div class="w-9 h-9 rounded-lg bg-amber-100 flex items-center
+                            justify-center shrink-0 mt-0.5">
+                    <i data-lucide="megaphone" class="w-4 h-4 text-amber-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-900">${a.title}</p>
+                    <p class="text-xs text-gray-600 mt-0.5 line-clamp-2">${a.body}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">${a.createdAt}</p>
+                </div>
+                ${!a.read ? `<span class="w-2 h-2 bg-amber-500 rounded-full mt-2 shrink-0"></span>` : ''}
+            </div>`).join('');
+
+                // Insert announcements at the top of the dropdown
+                const separator = `<p class="text-[10px] font-semibold text-gray-400
+            uppercase px-4 pt-3 pb-1 bg-white">📢 Announcements</p>`;
+                list.insertAdjacentHTML('afterbegin', separator + html);
+                lucide.createIcons();
+            } catch (_) { }
+        }
+
+        async function markAnnouncementsRead() {
+            try {
+                await fetch('/professional/announcements/mark-read', { method: 'POST' });
+            } catch (_) { }
+        }
+
+        // Hook into existing toggleNotifications
+        const _origToggle = toggleNotifications;
+        toggleNotifications = async function () {
+            await _origToggle();
+            if (notifOpen) {
+                await loadAnnouncements();
+                await markAnnouncementsRead();
+            }
+        };
+
+        // Poll announcement count every 30s
+        loadAnnouncementCount();
+        setInterval(loadAnnouncementCount, 30000);
+    </script>
+</body>
+
+</html>

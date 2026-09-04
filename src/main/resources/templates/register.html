@@ -1,0 +1,1550 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" th:href="@{/images/myLogo.png}">
+
+    <title>EduConnect - Unified Opportunity Platform</title>
+    <script src="/_sdk/element_sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            overflow: hidden;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        /* Gradient Background Animation */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .gradient-bg {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #667eea);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        /* Container */
+        .container-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: center;
+        }
+
+        /* Left Side - Branding */
+        .branding-section {
+            color: white;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            /* background: rgba(255, 255, 255, 0.2); */
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-icon i {
+            color: white;
+            width: 32px;
+            height: 32px;
+        }
+
+        .platform-name {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .tagline-text {
+            font-size: 18px;
+            font-weight: 400;
+            opacity: 0.95;
+            line-height: 1.6;
+            max-width: 350px;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-item i {
+            width: 24px;
+            height: 24px;
+            color: #a8e6cf;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feature-item-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Right Side - Form */
+        .form-section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab-button {
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-align: center;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            background: white;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Form Content */
+        .form-content {
+            padding: 40px;
+        }
+
+        .form-content.hidden {
+            display: none;
+        }
+
+        .form-heading {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .form-subheading {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 28px;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            gap: 10px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-circle {
+            background: #a8e6cf;
+            color: white;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #e9ecef;
+            margin-bottom: 28px;
+            display: none;
+        }
+
+        .step-line.active {
+            display: block;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group.hidden {
+            display: none;
+        }
+
+        .register-step {
+            display: block;
+        }
+
+        .register-step.hidden {
+            display: none;
+        }
+
+        .form-group.two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .form-label i {
+            width: 18px;
+            height: 18px;
+            color: #667eea;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            width: 18px;
+            height: 18px;
+            color: #667eea;
+            pointer-events: none;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #1a1a1a;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder,
+        textarea::placeholder {
+            color: #adb5bd;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="text"]:invalid:not(:placeholder-shown),
+        input[type="email"]:invalid:not(:placeholder-shown),
+        input[type="password"]:invalid:not(:placeholder-shown) {
+            border-color: #ff6b6b;
+        }
+
+        input[type="text"]:valid:not(:placeholder-shown),
+        input[type="email"]:valid:not(:placeholder-shown),
+        input[type="password"]:valid:not(:placeholder-shown) {
+            border-color: #a8e6cf;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            padding-left: 16px;
+        }
+
+        /* Role Selection */
+        .role-grid {
+            display: grid;
+            grid-template-rows: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .role-option {
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .role-option:hover {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .role-option.selected {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-color: #667eea;
+        }
+
+        .role-option-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 8px;
+            color: #667eea;
+        }
+
+        .role-option-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        /* Tags Input */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            min-height: 48px;
+            align-items: center;
+        }
+
+        .tags-container:focus-within {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tags-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            min-width: 100px;
+            padding: 0;
+        }
+
+        .tags-input:focus {
+            outline: none;
+        }
+
+        .tags-input::placeholder {
+            color: #adb5bd;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            flex: 2;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f3ff;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, rgba(168, 230, 207, 0.1), rgba(102, 126, 234, 0.1));
+            border: 2px solid #a8e6cf;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .success-message i {
+            width: 24px;
+            height: 24px;
+            color: #a8e6cf;
+            flex-shrink: 0;
+        }
+
+        .success-message-text {
+            color: #2d5f4f;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+        }
+
+        .password-strength-bar.weak {
+            width: 33%;
+            background: #ff6b6b;
+        }
+
+        .password-strength-bar.medium {
+            width: 66%;
+            background: #ffd43b;
+        }
+
+        .password-strength-bar.strong {
+            width: 100%;
+            background: #a8e6cf;
+        }
+
+        .password-strength-text {
+            font-size: 12px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .password-strength-text.weak {
+            color: #ff6b6b;
+        }
+
+        .password-strength-text.medium {
+            color: #ffd43b;
+        }
+
+        .password-strength-text.strong {
+            color: #a8e6cf;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container-wrapper {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .branding-section {
+                text-align: center;
+            }
+
+            .tagline-text {
+                max-width: 100%;
+                margin: 0 auto;
+            }
+
+            .feature-list {
+                max-width: 400px;
+                margin: 30px auto 0;
+            }
+
+            .form-section {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-wrapper {
+                padding: 16px;
+            }
+
+            .form-content {
+                padding: 28px;
+            }
+
+            .platform-name {
+                font-size: 32px;
+            }
+
+            .form-heading {
+                font-size: 24px;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step-indicator {
+                margin-bottom: 24px;
+            }
+
+            .step-label {
+                display: none;
+            }
+
+            .branding-section {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-content {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                flex: 1;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            select,
+            textarea {
+                padding: 12px 14px 12px 40px;
+                font-size: 16px;
+            }
+
+            .form-group.two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+    </style>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="gradient-bg">
+    <div class="app-wrapper">
+        <div class="container-wrapper">
+            <!-- Left Side - Branding -->
+            <div class="branding-section">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <img th:src="@{/images/myLogo.png}" alt="EduConnect Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div class="platform-name" id="platformName">
+                        EduConnect
+                    </div>
+                </div>
+                <div class="tagline-text" id="taglineText">
+                    Discover Opportunities That Match Your Skills
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i data-lucide="briefcase"></i>
+                        <div class="feature-item-text"><strong>Jobs &amp; Internships</strong> - Find your next
+                            opportunity
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="zap"></i>
+                        <div class="feature-item-text"><strong>Hackathons &amp; Contests</strong> - Showcase your skills
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="users"></i>
+                        <div class="feature-item-text"><strong>Network &amp; Connect</strong> - Meet like-minded
+                            professionals
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i data-lucide="trending-up"></i>
+                        <div class="feature-item-text"><strong>Grow Your Career</strong> - Access exclusive events
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Right Side - Form -->
+            <div class="form-section">
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <button class="tab-button active" id="loginTab" data-tab="login"> <i data-lucide="log-in"
+                            style="display: inline; width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px;"></i>
+                        Login </button> <button class="tab-button" id="registerTab" data-tab="register"> <i
+                            data-lucide="user-plus"
+                            style="display: inline; width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px;"></i>
+                        Register </button>
+                </div><!-- Login Form -->
+                <div class="form-content" id="loginForm">
+                    <div class="form-heading" id="loginHeading">
+                        Welcome Back
+                    </div>
+                    <div class="form-subheading">
+                        Sign in to continue to EduConnect
+                    </div>
+                    <form id="loginFormElement" th:action="@{/userLogin}" method="post">
+                        <div class="form-group">
+                            <label class="form-label"> <i data-lucide="mail"></i> Email Address </label>
+                            <div class="input-wrapper">
+                                <i data-lucide="mail" class="input-icon"></i> <input type="email" name="username"
+                                    placeholder="your@email.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"> <i data-lucide="lock"></i> Password </label>
+                            <div class="input-wrapper">
+                                <i data-lucide="lock" class="input-icon"></i> <input type="password" name="password"
+                                    placeholder="Enter your password" required>
+                            </div>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 12px;">
+                            <a href="/api/auth/forgot-password"
+                                style="font-size: 14px; color: #667eea; text-decoration: none; font-weight: 600; transition: color 0.3s;">Forgot
+                                password?</a>
+                                
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary"> <i data-lucide="arrow-right"
+                                    style="width: 18px; height: 18px;"></i> Sign In </button>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px; color: #6c757d; font-size: 14px;">
+                            Don't have an account? <a href="#" onclick="switchTab('register'); return false;"
+                                style="color: #667eea; font-weight: 600; text-decoration: none;">Sign up here</a>
+                        </div>
+                    </form>
+                </div><!-- Register Form -->
+                <div class="form-content hidden" id="registerForm" style="height: 15cm;overflow-y: scroll;">
+                    <div class="form-heading" id="registerHeading">
+                        Create Your Account
+                    </div>
+                    <div class="form-subheading">
+                        Join thousands of students, organizations, and professionals
+                    </div><!-- Step Indicator -->
+                    <div class="step-indicator" id="stepIndicator">
+                        <div class="step active" data-step="1">
+                            <div class="step-circle">
+                                1
+                            </div>
+                            <div class="step-label">
+                                Basic Info
+                            </div>
+                        </div>
+                        <div class="step-line active"></div>
+                        <div class="step" data-step="2">
+                            <div class="step-circle">
+                                2
+                            </div>
+                            <div class="step-label">
+                                Role &amp; Profile
+                            </div>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step" data-step="3">
+                            <div class="step-circle">
+                                3
+                            </div>
+                            <div class="step-label">
+                                Skills &amp; Location
+                            </div>
+                        </div>
+                    </div>
+                    <form id="registerFormElement" onsubmit="handleRegisterSubmit(event)">
+                        <!-- Step 1: Basic Info -->
+                        <div class="register-step" data-step="1">
+                            <div class="form-group">
+                                <label class="form-label"> <i data-lucide="user"></i> Full Name </label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="user" class="input-icon"></i> <input type="text"
+                                        placeholder="John Doe" id="fullName" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"> <i data-lucide="mail"></i> Email Address </label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="mail" class="input-icon"></i> <input type="email"
+                                        placeholder="your@email.com" id="registerEmail" required>
+                                </div>
+                            </div>
+                            <small id="email-msg" class="text-sm"></small>
+                            <div class="form-group">
+                                <label class="form-label"> <i data-lucide="lock"></i> Password </label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="lock" class="input-icon"></i> <input type="password"
+                                        placeholder="Create a strong password" id="registerPassword" required
+                                        onkeyup="checkPasswordStrength(this.value)">
+                                </div>
+                                <div class="password-strength">
+                                    <div class="password-strength-bar" id="strengthBar"></div>
+                                </div>
+                                <div class="password-strength-text" id="strengthText"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"> <i data-lucide="lock"></i> Confirm Password </label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="lock" class="input-icon"></i> <input type="password"
+                                        placeholder="Re-enter your password" id="confirmPassword" required>
+                                </div>
+                            </div>
+                        </div><!-- Step 2: Role & Profile -->
+                        <div class="register-step hidden" data-step="2">
+                            <input type="hidden" id="roleInput" name="role">
+                            <div class="form-group">
+                                <label class="form-label"> <i data-lucide="briefcase"></i> Select Your Role </label>
+                                <div class="role-grid" id="roleGrid">
+
+                                    <div class="role-option" data-role="student">
+                                        <i data-lucide="book-open" class="role-option-icon"></i>
+                                        <div class="role-option-text">
+                                            Student
+                                        </div>
+                                    </div>
+                                    <div class="role-option" data-role="organization">
+                                        <i data-lucide="building" class="role-option-icon"></i>
+                                        <div class="role-option-text">
+                                            Organization
+                                        </div>
+                                    </div>
+                                    <div class="role-option" data-role="professional">
+                                        <i data-lucide="user-check" class="role-option-icon"></i>
+                                        <div class="role-option-text">
+                                            Professional
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"> <i data-lucide="file-text"></i> About You (Bio) </label>
+                                <textarea id="userBio" placeholder="Tell us a bit about yourself..."
+                                    style="padding-left: 16px;"></textarea>
+                            </div>
+                        </div><!-- Step 3: Skills & Location -->
+                        <!-- Step 3: Dynamic Fields -->
+                        <div class="register-step hidden" data-step="3">
+
+                            <!-- STUDENT FIELDS -->
+                            <div id="studentFields" class="role-fields hidden">
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="book"></i> Education</label>
+                                    <input type="text" placeholder="B.Tech / MCA / etc" id="studentEducation">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="book"></i> University</label>
+                                    <input type="text" placeholder="VNSGU" id="studentUniversity">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="code"></i> Skills</label>
+                                    <div class="tags-container" id="skillsContainer">
+                                        <input type="text" class="tags-input" placeholder="Java, Python..."
+                                            id="studentSkills">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="heart"></i> Interests</label>
+                                    <div class="tags-container" id="interestsContainer">
+                                        <input type="text" class="tags-input" placeholder="Hackathons, Jobs..."
+                                            id="studentInterests">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ORGANIZATION FIELDS -->
+                            <div id="organizationFields" class="role-fields hidden">
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="building"></i> Organization Name</label>
+                                    <input type="text" placeholder="Company Name" id="organizationName">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="globe"></i> Website</label>
+                                    <input type="text" placeholder="https://example.com" id="organizationWebsite">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="briefcase"></i> Industry</label>
+                                    <input type="text" placeholder="IT / Finance / Education" id="organizationIndustry">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="briefcase"></i> Total Employees</label>
+                                    <input type="text" placeholder="500-1000" id="organizationTotalEmployees">
+                                </div>
+
+                                <!-- <div class="form-group">
+                                    <label class="form-label"><i data-lucide="book"></i> Description</label>
+                                    <input type="text" placeholder="About Organization">
+                                </div> -->
+                            </div>
+
+                            <!-- PROFESSIONAL / EMPLOYEE -->
+                            <div id="professionalFields" class="role-fields hidden">
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="briefcase"></i> Company</label>
+                                    <input type="text" placeholder="Company Name" id="professionalCompany">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="user-check"></i> Experience</label>
+                                    <input type="text" placeholder="2 years" id="professionalExperience">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="book"></i> Education</label>
+                                    <input type="text" placeholder="B.Tech / MCA / etc" id="professionalEducation">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="code"></i> Skills</label>
+                                    <div class="tags-container" id="skillsContainer">
+                                        <input type="text" class="tags-input" placeholder="Java, Python..."
+                                            id="professionalSkills">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- COMMON -->
+                            <div class="form-group">
+                                <label class="form-label"><i data-lucide="map-pin"></i> Location</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="map-pin" class="input-icon"></i>
+                                    <input type="text" id="location" placeholder="City" required>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- Buttons -->
+                        <div class="button-group">
+                            <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;"
+                                onclick="previousStep()"> <i data-lucide="arrow-left"
+                                    style="width: 18px; height: 18px;"></i> Back </button> <button type="button"
+                                class="btn btn-primary" id="nextBtn" onclick="nextStep()"> <i data-lucide="arrow-right"
+                                    style="width: 18px; height: 18px;"></i> Next </button> <button type="submit"
+                                class="btn btn-primary hidden" id="submitBtn"> <i data-lucide="check-circle"
+                                    style="width: 18px; height: 18px;"></i> Create Account </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function showRoleFields(role) {
+            document.querySelectorAll('.role-fields').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            if (role === 'student') {
+                document.getElementById('studentFields').classList.remove('hidden');
+            }
+
+            if (role === 'organization') {
+                document.getElementById('organizationFields').classList.remove('hidden');
+            }
+
+            if (role === 'professional') {
+                document.getElementById('professionalFields').classList.remove('hidden');
+            }
+        }
+
+
+        let currentStep = 1;
+        const maxSteps = 3;
+        let selectedRole = null;
+        let skills = [];
+        let interests = [];
+
+        // Element SDK Initialization
+        const defaultConfig = {
+            platform_name: 'EduConnect',
+            tagline: 'Discover Opportunities That Match Your Skills',
+            login_heading: 'Welcome Back',
+            register_heading: 'Create Your Account'
+        };
+
+        let config = { ...defaultConfig };
+
+        const element = {
+            defaultConfig,
+            onConfigChange: async (newConfig) => {
+                config = { ...config, ...newConfig };
+                document.getElementById('platformName').textContent = config.platform_name;
+                document.getElementById('taglineText').textContent = config.tagline;
+                document.getElementById('loginHeading').textContent = config.login_heading;
+                document.getElementById('registerHeading').textContent = config.register_heading;
+            },
+            mapToCapabilities: () => ({
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            }),
+            mapToEditPanelValues: () => new Map([
+                ['platform_name', config.platform_name],
+                ['tagline', config.tagline],
+                ['login_heading', config.login_heading],
+                ['register_heading', config.register_heading]
+            ])
+        };
+
+        if (window.elementSdk) {
+            window.elementSdk.init(element);
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+            } else {
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+            }
+        }
+
+        document.getElementById('loginTab').addEventListener('click', () => switchTab('login'));
+        document.getElementById('registerTab').addEventListener('click', () => switchTab('register'));
+
+        // Password Strength Check
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+            strengthBar.className = 'password-strength-bar';
+            strengthText.className = 'password-strength-text';
+
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                strengthText.textContent = '';
+            } else if (strength <= 1) {
+                strengthBar.classList.add('weak');
+                strengthText.classList.add('weak');
+                strengthText.textContent = 'Weak password';
+            } else if (strength === 2) {
+                strengthBar.classList.add('medium');
+                strengthText.classList.add('medium');
+                strengthText.textContent = 'Medium strength';
+            } else {
+                strengthBar.classList.add('strong');
+                strengthText.classList.add('strong');
+                strengthText.textContent = 'Strong password';
+            }
+        }
+
+        // Role Selection
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.addEventListener('click', function () {
+
+                document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+
+                this.classList.add('selected');
+                selectedRole = this.dataset.role;
+
+                document.getElementById('roleInput').value = selectedRole;
+
+                // 🔥 THIS LINE IS KEY
+                showRoleFields(selectedRole);
+            });
+        });
+
+        // Skills and Interests Tags
+        function setupTagsInput(inputId, containerId, tagsList) {
+            const input = document.getElementById(inputId);
+            const container = document.getElementById(containerId);
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = input.value.trim();
+                    if (value && !tagsList.includes(value)) {
+                        tagsList.push(value);
+                        renderTags(container, tagsList, inputId, containerId);
+                        input.value = '';
+                    }
+                }
+            });
+        }
+
+        function renderTags(container, tagsList, inputId, containerId) {
+            const input = document.getElementById(inputId);
+            const tags = container.querySelectorAll('.tag');
+            tags.forEach(tag => tag.remove());
+
+            tagsList.forEach(tag => {
+                const tagEl = document.createElement('div');
+                tagEl.className = 'tag';
+                tagEl.innerHTML = `
+                    ${tag}
+                    <span class="tag-remove" onclick="removeTag('${tag}', ${inputId === 'skillsInput' ? 'skills' : 'interests'})">×</span>
+                `;
+                container.insertBefore(tagEl, input);
+            });
+        }
+
+        window.removeTag = function (tag, type) {
+            const tagsList = type === 'skills' ? skills : interests;
+            const index = tagsList.indexOf(tag);
+            if (index > -1) {
+                tagsList.splice(index, 1);
+            }
+            const containerId = type === 'skills' ? 'skillsContainer' : 'interestsContainer';
+            const inputId = type === 'skills' ? 'skillsInput' : 'interestsInput';
+            const container = document.getElementById(containerId);
+            renderTags(container, tagsList, inputId, containerId);
+        };
+
+        setupTagsInput('skillsInput', 'skillsContainer', skills);
+        setupTagsInput('interestsInput', 'interestsContainer', interests);
+
+        // Step Navigation
+        function updateStepIndicator() {
+            // Hide all steps
+            document.querySelectorAll('.register-step').forEach(step => {
+                step.classList.add('hidden');
+            });
+
+            // Show current step ONLY (correct selector)
+            const activeStep = document.querySelector(`.register-step[data-step="${currentStep}"]`);
+            if (activeStep) {
+                activeStep.classList.remove('hidden');
+            }
+
+            // Update step indicator UI
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+
+            // Step line
+            document.querySelectorAll('.step-line').forEach((line, index) => {
+                if (index < currentStep - 1) {
+                    line.classList.add('active');
+                } else {
+                    line.classList.remove('active');
+                }
+            });
+
+            // Buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            prevBtn.style.display = currentStep === 1 ? 'none' : 'flex';
+
+            if (currentStep === maxSteps) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+            }
+        }
+        function validateStep(step) {
+            if (step === 1) {
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('registerEmail').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (!fullName) {
+                    alert('Please enter your full name');
+                    return false;
+                }
+                if (!email) {
+                    alert('Please enter your email');
+                    return false;
+                }
+                if (password.length < 8) {
+                    alert('Password must be at least 8 characters');
+                    return false;
+                }
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match');
+                    return false;
+                }
+                return true;
+            }
+
+            if (step === 2) {
+                if (!selectedRole) {
+                    alert('Please select a role');
+                    return false;
+                }
+                return true;
+            }
+
+            if (step === 3) {
+
+                if (!selectedRole) {
+                    alert("Role missing");
+                    return false;
+                }
+
+                if (selectedRole === "student" && skills.length === 0) {
+                    alert("Add at least one skill");
+                    return false;
+                }
+
+                if (selectedRole === "organization") {
+                    const orgName = document.querySelector('#organizationFields input');
+                    if (!orgName.value) {
+                        alert("Enter organization name");
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return true;
+        }
+
+        function nextStep() {
+            if (validateStep(currentStep) && currentStep < maxSteps) {
+                currentStep++;
+                updateStepIndicator();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepIndicator();
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateStepIndicator();
+        });
+
+        // If page already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updateStepIndicator);
+        } else {
+            updateStepIndicator();
+        }
+
+        // Form Submissions
+        function handleLoginSubmit(e) {
+
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            const button = e.target.querySelector('button');
+            button.classList.add('loading');
+            button.disabled = true;
+
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+                alert(`Welcome back! (This is a demo - not a real login)`);
+            }, 1500);
+        }
+
+        // function handleRegisterSubmit(e) {
+        //     e.preventDefault();
+        //     if (!validateStep(3)) return;
+
+        //     const button = e.target.querySelector('button[type="submit"]');
+        //     button.classList.add('loading');
+        //     button.disabled = true;
+
+        //     setTimeout(() => {
+        //         button.classList.remove('loading');
+        //         button.disabled = false;
+
+        //         // Show success message
+        //         const formContent = document.getElementById('registerForm');
+        //         const successHtml = `
+        //             <div style="text-align: center; padding: 40px 20px;">
+        //                 <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+        //                     <i data-lucide="check-circle" style="width: 40px; height: 40px; color: white;"></i>
+        //                 </div>
+        //                 <h2 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">Welcome to EduConnect!</h2>
+        //                 <p style="font-size: 16px; color: #6c757d; margin-bottom: 12px;">Your account has been created successfully.</p>
+        //                 <p style="font-size: 14px; color: #6c757d; margin-bottom: 32px;">A confirmation email has been sent to your inbox. Please verify your email to unlock all features.</p>
+        //                 <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        //                     <button onclick="location.reload()" class="btn btn-primary" style="min-width: 200px;">
+        //                         <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+        //                         Start Exploring
+        //                     </button>
+        //                 </div>
+        //             </div>
+        //         `;
+
+        //         const oldContent = formContent.innerHTML;
+        //         formContent.innerHTML = successHtml;
+        //         lucide.createIcons();
+        //     }, 2000);
+        // }
+
+        async function handleRegisterSubmit(e) {
+            e.preventDefault();
+
+            const data = {
+                //commmon fields
+                fullName: document.getElementById("fullName").value,
+                email: document.getElementById("registerEmail").value,
+                password: document.getElementById("registerPassword").value,
+                role: selectedRole.toUpperCase(),
+                bio: document.getElementById("userBio").value,
+                location: document.getElementById("location").value,
+
+                // Student fields
+                studentSkills: selectedRole === "student" ? document.querySelector('#studentSkills').value : null,
+                studentInterests: selectedRole === "student" ? document.querySelector('#studentInterests').value : null,
+                studentEducation: selectedRole === "student" ? document.querySelector('#studentEducation').value : null,
+                studentUniversity: selectedRole === "student" ? document.querySelector('#studentUniversity').value : null,
+                // organization fields
+                organizationName: selectedRole === "organization" ? document.querySelector('#organizationName').value : null,
+                website: selectedRole === "organization" ? document.querySelector('#organizationWebsite').value : null,
+                industry: selectedRole === "organization" ? document.querySelector('#organizationIndustry').value : null,
+                totalEmployees: selectedRole === "organization" ? document.querySelector('#organizationTotalEmployees').value : null,
+                //professional fields
+                company: selectedRole === "professional" ? document.querySelector('#professionalCompany').value : null,
+                experience: selectedRole === "professional" ? document.querySelector('#professionalExperience').value : null,
+                education: selectedRole === "professional" ? document.querySelector('#professionalEducation').value : null,
+                professionalSkills: selectedRole === "professional" ? document.querySelector('#professionalSkills').value : null,
+            };
+
+            try {
+                const response = await fetch("http://localhost:8080/api/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Registration failed");
+                }
+
+                const result = await response.text();
+
+                // ✅ SHOW SUCCESS UI
+                const registerForm = document.getElementById('registerForm');
+
+                registerForm.innerHTML = `
+            <div style="text-align:center; padding:30px;">
+                <h2>✅ Registration Successful</h2>
+                <p>Redirecting to login...</p>
+            </div>
+        `;
+
+                // ✅ SWITCH TO LOGIN
+                setTimeout(() => {
+                    switchTab('login');
+                    document.querySelector('#loginForm input[type="email"]').focus();
+                }, 1500);
+
+            } catch (error) {
+                console.error(error);
+                alert("❌ Registration Failed");
+            }
+        }
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9dfbe0d683a2ff97',t:'MTc3NDA4NDgwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();
+
+        const emailInput = document.getElementById('registerEmail');
+        const emailMsg = document.getElementById('email-msg');
+        const registerBtn = document.getElementById('nextBtn');
+        let timeout = null;
+
+        emailInput.addEventListener('input', () => {
+
+            clearTimeout(timeout);
+
+            const email = emailInput.value.trim();
+
+            // basic validation
+            if (email.length < 5 || !email.includes('@')) {
+                emailMsg.textContent = '';
+                return;
+            }
+
+            // 🔥 debounce (avoid too many API calls)
+            timeout = setTimeout(() => {
+
+                fetch(`/api/auth/check-email?email=${email}`)
+                    .then(res => res.json())
+                    .then(exists => {
+
+                        if (exists) {
+                            emailMsg.textContent = "❌ Email already registered";
+                            emailMsg.style.color = "red";
+                            registerBtn.disabled = true;  // ❌ DISABLE
+                        } else {
+                            emailMsg.textContent = "✅ Email available";
+                            emailMsg.style.color = "green";
+                            registerBtn.disabled = false; // ✅ ENABLE
+                        }
+
+                    })
+                    .catch(() => {
+                        emailMsg.textContent = "⚠️ Error checking email";
+                        emailMsg.style.color = "orange";
+                    });
+
+            }, 500); // delay
+
+        });
+    </script>
+</body>
+<!-- app password  = pxsw oodq ynni fyzy -->
+</html>
